@@ -13,7 +13,7 @@ import { AppointmentsHeader } from "./AppointmentsHeader";
 
 // Update the type definitions at the top of the file
 type Service = {
-  id: string;  // Added id field
+  id: string;
   name: string;
   duration: string;
   price: string;
@@ -81,22 +81,22 @@ const timeSlots = Array.from({ length: 64 }, (_, i) => {
   return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
 });
 
-// Sample services with pricing
-const servicesData = [
-  { name: 'APPLE Beard Dye', duration: '1h', price: 'AED 30' },
-  { name: 'Haircut+ blowdry', duration: '1h', price: 'from AED 220' },
-  { name: 'Haircut+ blowdry', duration: '1h', price: 'AED 250' },
-  { name: 'Haircut+ blowdry', duration: '1h', price: 'AED 300' },
-  { name: 'Haircut+ blowdry', duration: '1h', price: 'AED 350' },
-  { name: 'Children Color (Spray)', duration: '1h', price: 'AED 10' },
-  { name: 'Children Color (Spray)', duration: '1h', price: 'AED 20' },
-  { name: "Children's haircut", duration: '1h', price: 'AED 50' },
-  { name: "Children's haircut", duration: '1h', price: 'AED 80' },
-  { name: "Children's haircut", duration: '1h', price: 'AED 150' },
-  { name: "Children's haircut", duration: '1h', price: 'AED 200' },
-  { name: 'Hair Cut', duration: '20min', price: 'AED 80' },
-  { name: 'Wavy', duration: '1h', price: 'AED 100' },
-  { name: 'Blow dry', duration: '1h', price: 'AED 190' },
+// Update servicesData with IDs
+const servicesData: Service[] = [
+  { id: 'service-1', name: 'APPLE Beard Dye', duration: '1h', price: 'AED 30' },
+  { id: 'service-2', name: 'Haircut+ blowdry', duration: '1h', price: 'from AED 220' },
+  { id: 'service-3', name: 'Haircut+ blowdry', duration: '1h', price: 'AED 250' },
+  { id: 'service-4', name: 'Haircut+ blowdry', duration: '1h', price: 'AED 300' },
+  { id: 'service-5', name: 'Haircut+ blowdry', duration: '1h', price: 'AED 350' },
+  { id: 'service-6', name: 'Children Color (Spray)', duration: '1h', price: 'AED 10' },
+  { id: 'service-7', name: 'Children Color (Spray)', duration: '1h', price: 'AED 20' },
+  { id: 'service-8', name: "Children's haircut", duration: '1h', price: 'AED 50' },
+  { id: 'service-9', name: "Children's haircut", duration: '1h', price: 'AED 80' },
+  { id: 'service-10', name: "Children's haircut", duration: '1h', price: 'AED 150' },
+  { id: 'service-11', name: "Children's haircut", duration: '1h', price: 'AED 200' },
+  { id: 'service-12', name: 'Hair Cut', duration: '20min', price: 'AED 80' },
+  { id: 'service-13', name: 'Wavy', duration: '1h', price: 'AED 100' },
+  { id: 'service-14', name: 'Blow dry', duration: '1h', price: 'AED 190' },
 ];
 
 // Get current time indicator position
@@ -422,7 +422,7 @@ const AppointmentsCalendar = () => {
   const [isSelectingClient, setIsSelectingClient] = useState(false);
   const [clientSearchTerm, setClientSearchTerm] = useState("");
   const [isAddingNewClient, setIsAddingNewClient] = useState(false);
-  const [clients, setClients] = useState<Client[]>(allClients as Client[]);
+  const [clients] = useState<Client[]>(allClients as Client[]);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
@@ -705,7 +705,7 @@ const AppointmentsCalendar = () => {
                       />
                     );
                 })}
-            </div>
+      </div>
             <div className={`relative z-10 text-black text-xs p-1 flex flex-col h-full ${
               isDragging ? 'pointer-events-none' : ''
             }`}>
@@ -716,7 +716,7 @@ const AppointmentsCalendar = () => {
                         <div key={`${service.name}-${index}`} className="overflow-hidden" style={{ flexGrow: flexGrow }}>
                             <p className="font-bold truncate">{appointment.client?.name ?? 'Walk-In'}</p>
                             <p className="truncate">{service.name}</p>
-                        </div>
+      </div>
                     )
                 })}
             </div>
@@ -743,9 +743,9 @@ const AppointmentsCalendar = () => {
                         {staffMembers.find(s => s.id === appointment.staffId)?.name} &middot; {totalDuration}m
                     </div>
                 </div>
-            </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
   };
 
   const StaffColumn = ({ staff, children }) => {
@@ -753,8 +753,8 @@ const AppointmentsCalendar = () => {
       id: staff.id.toString(),  // Ensure ID is a string
       data: { staffId: staff.id }
     });
-    
-    return (
+
+  return (
       <div 
         ref={setNodeRef} 
         className={`relative border-r min-w-0 ${isOver ? 'bg-blue-50' : ''}`}
@@ -797,13 +797,14 @@ const AppointmentsCalendar = () => {
     const blockHeight = 16;
     
     // Calculate the number of 15-minute blocks from the top
-    let blocksFromTop = Math.round(relativeY / blockHeight);
+    // Use Math.floor instead of Math.round to snap to the start of intervals
+    let blocksFromTop = Math.floor(relativeY / blockHeight);
     
     // Calculate total minutes from 8:00 AM
     const minutesFromStart = blocksFromTop * 15;
     const totalMinutes = 8 * 60 + minutesFromStart; // 8 hours in minutes + offset
 
-    // Calculate hour and minute
+    // Calculate hour and minute, ensuring we snap to 15-minute intervals
     let hour = Math.floor(totalMinutes / 60);
     let minute = Math.floor((totalMinutes % 60) / 15) * 15;
 
@@ -820,10 +821,12 @@ const AppointmentsCalendar = () => {
 
     // Ensure the appointment doesn't end after 11:59 PM
     const endTimeMinutes = (hour * 60 + minute) + durationMinutes;
-    if (endTimeMinutes > (24 * 60)) {
+    if (endTimeMinutes > (23 * 60 + 45)) { // Changed to 23:45 to ensure we don't go past midnight
       // Adjust start time so appointment ends at 11:59 PM
-      hour = Math.floor((24 * 60 - durationMinutes) / 60);
-      minute = Math.floor(((24 * 60 - durationMinutes) % 60) / 15) * 15;
+      const maxEndMinutes = 23 * 60 + 45;
+      const newStartMinutes = maxEndMinutes - durationMinutes;
+      hour = Math.floor(newStartMinutes / 60);
+      minute = Math.floor((newStartMinutes % 60) / 15) * 15;
     }
 
     const newStartTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -909,7 +912,7 @@ const AppointmentsCalendar = () => {
       <div key={index} className="flex justify-between items-start mb-4">
         <div className="flex gap-3">
           <div className="w-1 self-stretch rounded" style={{ backgroundColor: serviceColors[index % serviceColors.length] }} />
-          <div>
+            <div>
             <div className="font-medium">{service.name}</div>
             <div className="text-sm text-gray-500">
               {timeString} &middot; {service.duration} &middot; {staffMembers.find(s => s.id === selectedSlot.staffId)?.name}
@@ -918,7 +921,7 @@ const AppointmentsCalendar = () => {
               <div className="mt-1 flex items-center text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded-md">
                 <AlertCircle size={14} className="mr-1" />
                 Team member is not available
-              </div>
+            </div>
             )}
           </div>
         </div>
@@ -927,7 +930,7 @@ const AppointmentsCalendar = () => {
           {isEditable && (
             <Button variant="ghost" size="icon" onClick={() => handleRemoveService(index)} className="ml-2 w-8 h-8">
               <X size={16} />
-            </Button>
+          </Button>
           )}
         </div>
       </div>
@@ -970,63 +973,63 @@ const AppointmentsCalendar = () => {
             currentDate={currentDate}
             onDateChange={setCurrentDate}
           />
+        
+        {/* Calendar Grid */}
+        <div className="flex-1 overflow-auto relative">
+          {/* Current time indicator */}
+          {currentTimePosition >= 0 && (
+            <div 
+              className="absolute left-0 right-0 h-0.5 bg-red-500 z-10"
+              style={{ top: `${80 + currentTimePosition}px` }}
+            />
+          )}
           
-          {/* Calendar Grid */}
-          <div className="flex-1 overflow-auto relative">
-            {/* Current time indicator */}
-            {currentTimePosition >= 0 && (
-              <div 
-                className="absolute left-0 right-0 h-0.5 bg-red-500 z-10"
-                style={{ top: `${80 + currentTimePosition}px` }}
-              />
-            )}
-            
             <div className="grid grid-cols-9 min-w-full">
-              {/* Time column */}
-              <div className="border-r bg-gray-50">
-                <div className="h-20 border-b flex items-center justify-center font-semibold text-gray-600">
-                  <Clock size={16} />
+            {/* Time column */}
+            <div className="border-r bg-gray-50">
+              <div className="h-20 border-b flex items-center justify-center font-semibold text-gray-600">
+                <Clock size={16} />
+              </div>
+              {timeSlots.map((time, index) => {
+                const isHourMark = time.endsWith(':00');
+                return (
+                  <div 
+                    key={index} 
+                    className={`h-4 flex items-center justify-center text-xs text-gray-600 px-2 ${
+                      isHourMark ? 'border-b border-gray-300 font-medium' : 'border-b border-gray-100'
+                    }`}
+                  >
+                    {isHourMark ? time : ''}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Staff columns */}
+            {staffMembers.map(staff => (
+                <StaffColumn staff={staff} key={staff.id}>
+                {/* Staff header */}
+                <div className="h-20 border-b bg-gray-50 flex flex-col items-center justify-center p-2">
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1"
+                    style={{ backgroundColor: '#4A90E2' }}
+                  >
+                    {staff.initial}
+                  </div>
+                  <div className="font-semibold text-xs text-center text-gray-800">
+                    {staff.name}
+                  </div>
                 </div>
-                {timeSlots.map((time, index) => {
-                  const isHourMark = time.endsWith(':00');
+                
+                {/* Time slots for this staff member */}
+                  <div className="relative">
+                {timeSlots.map((timeSlot, timeIndex) => {
+                      const isBooked = isTimeSlotBooked(staff.id, currentDate, timeSlot);
+                  const isHourMark = timeSlot.endsWith(':00');
+                  
                   return (
                     <div 
-                      key={index} 
-                      className={`h-4 flex items-center justify-center text-xs text-gray-600 px-2 ${
-                        isHourMark ? 'border-b border-gray-300 font-medium' : 'border-b border-gray-100'
-                      }`}
-                    >
-                      {isHourMark ? time : ''}
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* Staff columns */}
-              {staffMembers.map(staff => (
-                <StaffColumn staff={staff} key={staff.id}>
-                  {/* Staff header */}
-                  <div className="h-20 border-b bg-gray-50 flex flex-col items-center justify-center p-2">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm mb-1"
-                      style={{ backgroundColor: '#4A90E2' }}
-                    >
-                      {staff.initial}
-                    </div>
-                    <div className="font-semibold text-xs text-center text-gray-800">
-                      {staff.name}
-                    </div>
-                  </div>
-                  
-                  {/* Time slots for this staff member */}
-                  <div className="relative">
-                  {timeSlots.map((timeSlot, timeIndex) => {
-                      const isBooked = isTimeSlotBooked(staff.id, currentDate, timeSlot);
-                    const isHourMark = timeSlot.endsWith(':00');
-                    
-                    return (
-                      <div 
-                        key={timeIndex}
+                      key={timeIndex}
                           className={`h-4 relative ${
                             isBooked ? '' : 'cursor-pointer hover:bg-blue-50'
                           } transition-colors ${isHourMark ? 'border-b border-gray-300' : 'border-b border-gray-100'}`}
@@ -1053,32 +1056,32 @@ const AppointmentsCalendar = () => {
                             style={{ top: `${top}px`, height: `${height}px` }}
                             onClick={handleAppointmentClick}
                           />
-                    );
-                  })}
-                </div>
+                  );
+                })}
+              </div>
                 </StaffColumn>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Service Selection Panel */}
-        {isServicePanelOpen && (
+      {/* Service Selection Panel */}
+      {isServicePanelOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
             <div className="bg-white w-[800px] h-full shadow-xl flex flex-col">
-              {/* Header */}
-              <div className="p-4 border-b flex items-center justify-between">
+            {/* Header */}
+            <div className="p-4 border-b flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
+              <Button 
+                variant="ghost" 
+                size="sm"
                     onClick={() => {
                       setIsServicePanelOpen(false);
                       setEditingAppointmentId(null);
                     }}
-                >
+              >
                     <X size={20} />
-                </Button>
+              </Button>
                   <div>
                     <h2 className="text-lg font-semibold">
                       {editingAppointmentId ? 'Edit Appointment' : 'New Appointment'}
@@ -1086,10 +1089,10 @@ const AppointmentsCalendar = () => {
                     <p className="text-sm text-gray-600">
                       {selectedSlot && `${formatDate(selectedSlot.date)} at ${selectedSlot.timeSlot}`}
                     </p>
-                  </div>
-                </div>
+            </div>
               </div>
-              
+            </div>
+            
               <div className="flex flex-1 overflow-hidden">
                 {/* Client Info */}
                 <div className="w-1/2 border-r p-6 flex flex-col">
@@ -1104,12 +1107,12 @@ const AppointmentsCalendar = () => {
                                className="pl-10"
                              />
                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                          </div>
+                </div>
                           <div className="flex-1 overflow-auto -mx-6 px-6">
                               <button onClick={() => setIsAddingNewClient(true)} className="flex items-center gap-4 p-3 w-full text-left hover:bg-gray-50 rounded-lg">
                                   <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                                       <Plus className="w-5 h-5" />
-                                  </div>
+              </div>
                                   <div>
                                       <p className="font-semibold">Add new client</p>
                                   </div>
@@ -1174,8 +1177,8 @@ const AppointmentsCalendar = () => {
                           </button>
                       </div>
                   )}
-                </div>
-
+            </div>
+            
                 {/* Service Info */}
                 <div className="w-1/2 p-6 flex flex-col">
                   <div className="flex justify-between items-center mb-6">
@@ -1183,8 +1186,8 @@ const AppointmentsCalendar = () => {
                     <button onClick={() => setIsServicePanelOpen(false)} className="text-gray-500 hover:text-gray-800">
                       <X size={24} />
                     </button>
-                  </div>
-
+                </div>
+                
                   <div className="flex-1 overflow-auto -mx-6 px-6">
                     {selectedServices.map((service, index) => renderService(service, index, true))}
                     {isAddingService ? (
@@ -1196,22 +1199,26 @@ const AppointmentsCalendar = () => {
                           className="mb-2"
                         />
                         <div className="max-h-60 overflow-y-auto">
-                          {filteredServices.map(service => (
-                            <div key={service.id} className="p-2 hover:bg-gray-100 cursor-pointer rounded-md" onClick={() => handleServiceSelect(service)}>
+                          {filteredServices.map((service) => (
+                            <div 
+                              key={service.id} 
+                              className="p-2 hover:bg-gray-100 cursor-pointer rounded-md" 
+                      onClick={() => handleServiceSelect(service)}
+                    >
                               <p className="font-semibold">{service.name}</p>
                               <p className="text-sm text-gray-500">{service.duration} • {service.price}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
                     ) : (
                       <button onClick={() => setIsAddingService(true)} className="mt-4 flex items-center gap-2 text-purple-600 font-semibold hover:text-purple-800">
                         <Plus size={16} />
                         <span>Add a service</span>
                       </button>
                     )}
-                  </div>
-
+            </div>
+            
                   <div className="border-t pt-4 relative">
                      <div className="flex justify-between items-center font-semibold">
                        <span>Total</span>
@@ -1224,13 +1231,13 @@ const AppointmentsCalendar = () => {
                                <MoreHorizontal size={20} />
                            </Button>
                            <Button variant="outline" className="flex-1">Pay now</Button>
-                         <Button 
+                      <Button 
                                className="flex-1 bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center"
                                onClick={handleCheckout}
                                disabled={selectedServices.length === 0 || isSaving}
                            >
                                {isSaving ? <Loader2 className="animate-spin" /> : 'Checkout'}
-                         </Button>
+                      </Button>
                          {showQuickActions && (
                           <div className="absolute right-0 bottom-12 mb-2 w-48 bg-white rounded-md shadow-lg border z-10 py-1">
                             <button className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
@@ -1252,24 +1259,24 @@ const AppointmentsCalendar = () => {
                               <Trash2 size={16} />
                               <span>Cancel Booking</span>
                             </button>
-                          </div>
+                    </div>
                          )}
-                       </div>
+                </div>
                      ) : (
-                       <Button 
+                <Button 
                            className="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center"
                            onClick={handleSaveAppointment}
                            disabled={selectedServices.length === 0 || isSaving}
-                       >
+                >
                            {isSaving ? <Loader2 className="animate-spin" /> : 'Save'}
-                       </Button>
-                     )}
+                </Button>
+            )}
                   </div>
                 </div>
               </div>
-            </div>
           </div>
-        )}
+        </div>
+      )}
 
         <AddNewClientDialog 
           isOpen={isAddingNewClient}
@@ -1293,94 +1300,94 @@ const AppointmentsCalendar = () => {
           }}
         />
 
-        {/* Appointment Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>New Appointment</DialogTitle>
-            </DialogHeader>
-            {selectedSlot && (
-              <div className="space-y-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <div className="flex items-center gap-2 text-sm text-blue-800">
-                    <User size={14} />
-                    <span className="font-medium">
-                      {staffMembers.find(s => s.id === selectedSlot.staffId)?.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-blue-600 mt-1">
-                    <Clock size={14} />
-                    <span>
-                      {formatDate(selectedSlot.date)} at {selectedSlot.timeSlot}
-                    </span>
-                  </div>
+      {/* Appointment Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>New Appointment</DialogTitle>
+          </DialogHeader>
+          {selectedSlot && (
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-blue-800">
+                  <User size={14} />
+                  <span className="font-medium">
+                    {staffMembers.find(s => s.id === selectedSlot.staffId)?.name}
+                  </span>
                 </div>
-                
-                <div>
-                  <Label htmlFor="client">Client Name *</Label>
-                  <Input
-                    id="client"
-                    value={formData.client}
-                    onChange={(e) => setFormData({...formData, client: e.target.value})}
-                    placeholder="Enter client name"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    placeholder="+971-50-xxx-xxxx"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="service">Service *</Label>
-                  <select
-                    id="service"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={formData.service}
-                    onChange={(e) => setFormData({...formData, service: e.target.value})}
-                  >
-                    <option value="">Select a service</option>
-                    {services.map((service, index) => (
-                      <option key={index} value={service}>{service}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="notes">Notes</Label>
-                  <Input
-                    id="notes"
-                    value={formData.notes}
-                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                    placeholder="Additional notes (optional)"
-                  />
-                </div>
-                
-                <div className="flex gap-2 pt-4">
-                  <Button 
-                    onClick={handleSaveAppointment}
-                    disabled={!formData.client || !formData.service}
-                    className="flex-1"
-                  >
-                    Save Appointment
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setIsDialogOpen(false)}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
+                <div className="flex items-center gap-2 text-sm text-blue-600 mt-1">
+                  <Clock size={14} />
+                  <span>
+                    {formatDate(selectedSlot.date)} at {selectedSlot.timeSlot}
+                  </span>
                 </div>
               </div>
-            )}
-          </DialogContent>
-        </Dialog>
+              
+              <div>
+                <Label htmlFor="client">Client Name *</Label>
+                <Input
+                  id="client"
+                  value={formData.client}
+                  onChange={(e) => setFormData({...formData, client: e.target.value})}
+                  placeholder="Enter client name"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  placeholder="+971-50-xxx-xxxx"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="service">Service *</Label>
+                <select
+                  id="service"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={formData.service}
+                  onChange={(e) => setFormData({...formData, service: e.target.value})}
+                >
+                  <option value="">Select a service</option>
+                  {services.map((service, index) => (
+                    <option key={index} value={service}>{service}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Input
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                  placeholder="Additional notes (optional)"
+                />
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  onClick={handleSaveAppointment}
+                  disabled={!formData.client || !formData.service}
+                  className="flex-1"
+                >
+                  Save Appointment
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDialogOpen(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
         <CheckoutSheet
           isOpen={isCheckoutOpen}
@@ -1388,7 +1395,7 @@ const AppointmentsCalendar = () => {
           services={selectedServices}
           onConfirm={handlePaymentConfirm}
         />
-      </div>
+    </div>
     </DndContext>
   );
 };
